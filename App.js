@@ -1,20 +1,52 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { Ionicons } from '@expo/vector-icons';
+import TransactionsScreen from './screens/TransactionsScreen';
+import TransactionDetailScreen from './screens/TransactionDetailScreen';
+import SummaryScreen from './screens/SummaryScreen';
 
-export default function App() {
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+function TransactionsStack() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Stack.Navigator>
+      <Stack.Screen 
+        name="Transactions" 
+        component={TransactionsScreen} 
+        options={{ title: 'Transaction List' }}
+      />
+      <Stack.Screen 
+        name="TransactionDetail" 
+        component={TransactionDetailScreen} 
+        options={{ title: 'Transaction Detail' }}
+      />
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
+            if (route.name === 'Transactions') iconName = 'list';
+            else if (route.name === 'Summary') iconName = 'analytics';
+
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: '#4CAF50',
+          tabBarInactiveTintColor: 'gray',
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="Transactions" component={TransactionsStack} />
+        <Tab.Screen name="Summary" component={SummaryScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
